@@ -12,13 +12,21 @@ import java.util.List;
 
 public class TestConsole {
 
-    Questions questions;
+    private Questions questions;
 
     public TestConsole(Questions questions) {
         this.questions = questions;
     }
 
-    public void runTest(Questions questions) throws IOException {
+    public Questions getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Questions questions) {
+        this.questions = questions;
+    }
+
+    public void runTest() throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         this.printWelcome(input);
 
