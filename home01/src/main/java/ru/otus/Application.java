@@ -9,16 +9,15 @@ import java.io.IOException;
 
 public class Application {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("/context.xml");
         CsvReader csvReader = context.getBean("csvReader", CsvReader.class);
 
         try {
             csvReader.readCsv();
-            Questions questions = csvReader.getQuestions();
             TestConsole testConsole = context.getBean("testConsole", TestConsole.class);
-            testConsole.runTest(questions);
+            testConsole.runTest();
         } catch (IOException ioExc) {
             throw new RuntimeException("Error reading file with questions!" + ioExc, ioExc);
         } catch (Exception exc) {
