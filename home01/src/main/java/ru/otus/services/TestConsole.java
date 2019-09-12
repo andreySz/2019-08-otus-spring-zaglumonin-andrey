@@ -18,7 +18,7 @@ public class TestConsole {
         this.questions = questions;
     }
 
-    public void runTest() throws IOException {
+    public void runTest(Questions questions) throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         this.printWelcome(input);
 
