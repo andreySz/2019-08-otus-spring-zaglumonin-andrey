@@ -1,5 +1,7 @@
 package ru.otus.services;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.otus.model.Answer;
 import ru.otus.model.Question;
 import ru.otus.model.Questions;
@@ -10,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 
+@Service
 public class TestConsole {
 
     private Questions questions;

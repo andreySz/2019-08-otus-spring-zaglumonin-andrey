@@ -1,5 +1,8 @@
 package ru.otus.util;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 import ru.otus.model.Answer;
 import ru.otus.model.Question;
 import ru.otus.model.Questions;
@@ -9,16 +12,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+@Service
 public class CsvReader {
 
-    private String fileName = "";
+    @Value("${questions.file.path}")
+    private String fileName;
+
+    @Value("${questions.mintrueanswers}")
+    private int cntAnswersForTestPassing;
 
     private Questions questions;
 
-    public CsvReader(String fileName) {
+    public CsvReader() {
         questions = new Questions();
         questions.setQuestionList(new LinkedList<Question>());
-        this.fileName = fileName;
     }
 
     public String getFileName() {
@@ -37,6 +44,7 @@ public class CsvReader {
         this.questions = questions;
     }
 
+    @Bean
     public void readCsv() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
         String line = null;
