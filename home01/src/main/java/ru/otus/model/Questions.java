@@ -2,15 +2,15 @@ package ru.otus.model;
 
 import java.util.List;
 
-public class Questions {
+public class Questions implements IQuestions {
 
-    private List<Question> questionList;
+    private List<IQuestion> questionList;
 
-    public List<Question> getQuestionList() {
+    public List<IQuestion> getQuestionList() {
         return questionList;
     }
 
-    public void setQuestionList(List<Question> questionList) {
+    public void setQuestionList(List<IQuestion> questionList) {
         this.questionList = questionList;
     }
 }

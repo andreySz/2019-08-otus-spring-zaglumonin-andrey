@@ -1,8 +1,6 @@
 package ru.otus.services;
 
-import ru.otus.model.Answer;
-import ru.otus.model.Question;
-import ru.otus.model.Questions;
+import ru.otus.model.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,22 +28,22 @@ public class TestConsole {
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         this.printWelcome(input);
 
-        List<Question> questionsList = questions.getQuestionList();
+        List<IQuestion> questionsList = questions.getQuestionList();
         int cntQst = questionsList.size();
         System.out.println("Count of questions in the test: " + cntQst);
         String command = "start";
         try {
             while ((!"no".equalsIgnoreCase(command)) && (!"n".equalsIgnoreCase(command))) {
                 int score = 0;
-                Iterator<Question> itQ = questionsList.iterator();
+                Iterator<IQuestion> itQ = questionsList.iterator();
                 while (itQ.hasNext()) {
-                    Question question = itQ.next();
+                    IQuestion question = itQ.next();
                     this.printQuestion(question);
-                    Iterator<Answer> itA = question.getAnswerList().iterator();
+                    Iterator<IAnswer> itA = question.getAnswerList().iterator();
                     int indexAnswer = 1;
                     int indexCorrectAnswer = 0;
                     while (itA.hasNext()){
-                        Answer answer = itA.next();
+                        IAnswer answer = itA.next();
                         this.printAnswer(answer, indexAnswer);
                         indexCorrectAnswer = answer.isCorrect() ? indexAnswer : indexCorrectAnswer;
                         indexAnswer++;
@@ -81,12 +79,12 @@ public class TestConsole {
         System.out.println("Let's start the test. (For all questions choose only one correct answer 1-5)");
     }
 
-    private void printQuestion(Question question) {
+    private void printQuestion(IQuestion question) {
         System.out.println("\nQ: " + question.getQuestion());
         System.out.print("A: ");
     }
 
-    private void printAnswer(Answer answer, int indexAnswer) {
+    private void printAnswer(IAnswer answer, int indexAnswer) {
         System.out.print(indexAnswer + ") " + answer.getAnswer() + "; ");
     }
 

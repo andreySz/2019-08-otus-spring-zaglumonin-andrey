@@ -1,8 +1,6 @@
 package ru.otus.util;
 
-import ru.otus.model.Answer;
-import ru.otus.model.Question;
-import ru.otus.model.Questions;
+import ru.otus.model.*;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -13,11 +11,11 @@ public class CsvReader {
 
     private String fileName = "";
 
-    private Questions questions;
+    private IQuestions questions;
 
     public CsvReader(String fileName) {
         questions = new Questions();
-        questions.setQuestionList(new LinkedList<Question>());
+        questions.setQuestionList(new LinkedList<IQuestion>());
         this.fileName = fileName;
     }
 
@@ -29,7 +27,7 @@ public class CsvReader {
         this.fileName = fileName;
     }
 
-    public Questions getQuestions() {
+    public IQuestions getQuestions() {
         return questions;
     }
 
@@ -42,11 +40,11 @@ public class CsvReader {
         String line = null;
         int indexInLine = 0;
         int indexQuestion = 1;
-        List<Question> questionList = new LinkedList<Question>();
+        List<IQuestion> questionList = new LinkedList<IQuestion>();
         while ((line = reader.readLine()) != null) {
             Question question = new Question();
             Answer answer = new Answer();
-            List<Answer> answerList = new LinkedList<Answer>();
+            List<IAnswer> answerList = new LinkedList<IAnswer>();
             Scanner scanner = new Scanner(line);
             scanner.useDelimiter(",");
             while (scanner.hasNext()) {

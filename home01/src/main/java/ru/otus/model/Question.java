@@ -2,11 +2,11 @@ package ru.otus.model;
 
 import java.util.List;
 
-public class Question {
+public class Question implements IQuestion {
 
     private String question;
     private int index;
-    private List<Answer> answerList;
+    private List<IAnswer> answerList;
 
     public String getQuestion() {
         return question;
@@ -16,11 +16,11 @@ public class Question {
         this.question = question;
     }
 
-    public List<Answer> getAnswerList() {
+    public List<IAnswer> getAnswerList() {
         return answerList;
     }
 
-    public void setAnswerList(List<Answer> answerList) {
+    public void setAnswerList(List<IAnswer> answerList) {
         this.answerList = answerList;
     }
 
