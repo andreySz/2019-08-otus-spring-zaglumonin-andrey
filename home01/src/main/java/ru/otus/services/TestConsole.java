@@ -10,17 +10,17 @@ import java.util.List;
 
 public class TestConsole {
 
-    private Questions questions;
+    private IQuestions questions;
 
-    public TestConsole(Questions questions) {
+    public TestConsole(IQuestions questions) {
         this.questions = questions;
     }
 
-    public Questions getQuestions() {
+    public IQuestions getQuestions() {
         return questions;
     }
 
-    public void setQuestions(Questions questions) {
+    public void setQuestions(IQuestions questions) {
         this.questions = questions;
     }
 
