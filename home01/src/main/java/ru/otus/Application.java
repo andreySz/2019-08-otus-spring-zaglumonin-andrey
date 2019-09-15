@@ -22,7 +22,8 @@ public class Application {
         try {
             csvReader.readCsv();
             TestConsole testConsole = context.getBean(TestConsole.class);
-            //testConsole.runTest();
+            testConsole.setQuestions(csvReader.getQuestions());
+            testConsole.runTest();
         } catch (IOException ioExc) {
             throw new RuntimeException("Error reading file with questions!" + ioExc, ioExc);
         } catch (Exception exc) {

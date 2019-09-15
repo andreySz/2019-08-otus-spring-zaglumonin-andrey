@@ -21,10 +21,9 @@ public class CsvReader {
 
     private IQuestions questions;
 
-    public CsvReader(String fileName) {
+    public CsvReader() {
         questions = new Questions();
         questions.setQuestionList(new LinkedList<IQuestion>());
-        this.fileName = fileName;
     }
 
     public String getFileName() {
