@@ -1,6 +1,6 @@
 package ru.otus.model;
 
-public class Answer {
+public class Answer implements IAnswer {
 
     private String answer;
     private boolean isCorrect;
