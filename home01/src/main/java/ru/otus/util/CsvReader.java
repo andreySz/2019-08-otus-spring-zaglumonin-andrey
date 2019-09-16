@@ -1,5 +1,6 @@
 package ru.otus.util;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import ru.otus.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,30 +9,31 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 @Service
 public class CsvReader {
 
-    @Value("${questions.file.path}")
-    private String fileName;
+    @Value("${user.language}")
+    private String userLanguage;
 
-    @Value("${questions.mintrueanswers}")
-    private int cntAnswersForTestPassing;
+    @Value("${questions.file.path.ru}")
+    private String fileNameRu;
+
+    @Value("${questions.file.path.en}")
+    private String fileNameEn;
 
     private IQuestions questions;
 
-    public CsvReader() {
-        questions = new Questions();
-        questions.setQuestionList(new LinkedList<IQuestion>());
+    private Locale locale;
+
+    public String getFileNameEn() {
+        return fileNameEn;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFileNameEn(String fileName) {
+        this.fileNameEn = fileName;
     }
 
     public IQuestions getQuestions() {
@@ -42,8 +44,23 @@ public class CsvReader {
         this.questions = questions;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
+    public CsvReader() {
+        this.questions = new Questions();
+        this.questions.setQuestionList(new LinkedList<IQuestion>());
+        this.defineLocale();
+    }
+
     @Bean
     public void readCsv() throws IOException {
+        String fileName = getLocale() == Locale.ENGLISH ? fileNameEn : fileNameRu;
         BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
         String line = null;
         int indexInLine = 0;
@@ -78,6 +95,16 @@ public class CsvReader {
         }
         questions.setQuestionList(questionList);
         reader.close();
+    }
+
+    private void defineLocale() {
+        if (userLanguage == null) {
+            setLocale(LocaleContextHolder.getLocale());
+        } else if (userLanguage.equals("en")) {
+            setLocale(Locale.ENGLISH);
+        } else {
+            setLocale(new Locale("ru"));
+        }
     }
 
 }

@@ -4,8 +4,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.otus.model.Questions;
 import ru.otus.services.TestConsole;
 import ru.otus.util.CsvReader;
 
@@ -23,6 +21,7 @@ public class Application {
             csvReader.readCsv();
             TestConsole testConsole = context.getBean(TestConsole.class);
             testConsole.setQuestions(csvReader.getQuestions());
+            testConsole.setLocale(csvReader.getLocale());
             testConsole.runTest();
         } catch (IOException ioExc) {
             throw new RuntimeException("Error reading file with questions!" + ioExc, ioExc);
