@@ -20,8 +20,6 @@ public class Application {
         try {
             csvReader.readCsv();
             TestConsole testConsole = context.getBean(TestConsole.class);
-            testConsole.setQuestions(csvReader.getQuestions());
-            testConsole.setLocale(csvReader.getLocale());
             testConsole.runTest();
         } catch (IOException ioExc) {
             throw new RuntimeException("Error reading file with questions!" + ioExc, ioExc);

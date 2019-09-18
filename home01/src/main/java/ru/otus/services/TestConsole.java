@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import ru.otus.model.*;
 import org.springframework.stereotype.Service;
+import ru.otus.util.CsvReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,24 +23,13 @@ public class TestConsole {
     @Value("${questions.mintrueanswers}")
     private int cntAnswersForTestPassing;
 
-    private IQuestions questions;
-
     private Locale locale;
 
     @Autowired
     private MessageSource messageSource;
 
-    public TestConsole(IQuestions questions, MessageSource messageSource) {
-        this.questions = questions;
-    }
-
-    public IQuestions getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(IQuestions questions) {
-        this.questions = questions;
-    }
+    @Autowired
+    private CsvReader csvReader;
 
     public Locale getLocale() {
         return locale;
@@ -53,7 +43,7 @@ public class TestConsole {
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         this.printWelcome(input);
 
-        List<IQuestion> questionsList = questions.getQuestionList();
+        List<IQuestion> questionsList = csvReader.getQuestions().getQuestionList();
         int cntQst = questionsList.size();
         System.out.println(messageSource.getMessage("count.questions", new Object[]{cntQst}, getLocale()));
         String command = "start";
