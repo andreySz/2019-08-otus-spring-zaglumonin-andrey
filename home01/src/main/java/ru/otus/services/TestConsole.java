@@ -1,36 +1,51 @@
 package ru.otus.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import ru.otus.model.*;
+import org.springframework.stereotype.Service;
+import ru.otus.util.CsvReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
+@Service
 public class TestConsole {
 
-    private IQuestions questions;
+    @Value("$user.language")
+    private String userLanguage;
 
-    public TestConsole(IQuestions questions) {
-        this.questions = questions;
+    @Value("${questions.mintrueanswers}")
+    private int cntAnswersForTestPassing;
+
+    private Locale locale;
+
+    @Autowired
+    private MessageSource messageSource;
+
+    @Autowired
+    private CsvReader csvReader;
+
+    public Locale getLocale() {
+        return locale;
     }
 
-    public IQuestions getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(IQuestions questions) {
-        this.questions = questions;
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     public void runTest() throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         this.printWelcome(input);
 
-        List<IQuestion> questionsList = questions.getQuestionList();
+        List<IQuestion> questionsList = csvReader.getQuestions().getQuestionList();
         int cntQst = questionsList.size();
-        System.out.println("Count of questions in the test: " + cntQst);
+        System.out.println(messageSource.getMessage("count.questions", new Object[]{cntQst}, getLocale()));
         String command = "start";
         try {
             while ((!"no".equalsIgnoreCase(command)) && (!"n".equalsIgnoreCase(command))) {
@@ -48,7 +63,7 @@ public class TestConsole {
                         indexCorrectAnswer = answer.isCorrect() ? indexAnswer : indexCorrectAnswer;
                         indexAnswer++;
                     }
-                    System.out.print("\nYour answer: ");
+                    System.out.print(messageSource.getMessage("your.answer", new Object[]{}, getLocale()));
                     int respondedAnswer;
                     try {
                         respondedAnswer = Integer.valueOf(input.readLine());
@@ -59,24 +74,24 @@ public class TestConsole {
                 }
 
                 this.printResults(score, cntQst);
-                System.out.println("One more time? (yes/no)");
+                System.out.println(messageSource.getMessage("one.more.time", new Object[]{}, getLocale()));
                 command = input.readLine();
             }
         } catch (IOException ioExc) {
-            throw new RuntimeException("Input error value");
+            throw new RuntimeException("Input error value" + ioExc, ioExc);
         } catch (NumberFormatException nfExc) {
-            throw new RuntimeException("Incorrect input answer variant");
+            throw new RuntimeException("Incorrect input answer variant" + nfExc, nfExc);
         }
     }
 
     private void printWelcome(BufferedReader input) throws IOException {
         System.out.println(" ********************************** TESTING ********************************* ");
-        System.out.print("Please, enter your first name: ");
+        System.out.print(messageSource.getMessage("enter.first.name", new Object[]{}, getLocale()));
         String studentFirstName = input.readLine();
-        System.out.print("> and last name: ");
+        System.out.print(messageSource.getMessage("enter.last.name", new Object[]{}, getLocale()));
         String studentLastName = input.readLine();
-        System.out.println("\nHi, " + studentFirstName + " " + studentLastName + "! :)");
-        System.out.println("Let's start the test. (For all questions choose only one correct answer 1-5)");
+        System.out.println(messageSource.getMessage("hi.firstname.lastname", new Object[]{studentFirstName, studentLastName}, getLocale()));
+        System.out.println(messageSource.getMessage("lets.start", new Object[]{}, getLocale()));
     }
 
     private void printQuestion(IQuestion question) {
@@ -90,7 +105,7 @@ public class TestConsole {
 
     private void printResults(int score, int countQuestions) {
         System.out.println("\n-----------------------------------------------------------------------------");
-        System.out.print("---> RESULTS :: Your score: " + score + " - " + this.calcUserRating(score, countQuestions));
+        System.out.print(messageSource.getMessage("print.results", new Object[]{score, this.calcUserRating(score, countQuestions)}, getLocale()));
         System.out.print("\n-----------------------------------------------------------------------------");
         System.out.println("\n-----------------------------------------------------------------------------");
     }
@@ -103,15 +118,15 @@ public class TestConsole {
         String rating;
         double part = (double) score/countQuestions;
         if (!(part > 0.2d)) {
-            rating = "Very Bad!!! Need to start test one more time!";
+            rating = messageSource.getMessage("rating.verybad", new Object[]{}, getLocale());
         } else if (part > 0.2d && !(part > 0.4d)) {
-            rating = "Bad Need to start test one more time!";
+            rating = messageSource.getMessage("rating.bad", new Object[]{}, getLocale());
         } else if (part > 0.4d && !(part > 0.6d)) {
-            rating = "Satisfactory...";
+            rating = messageSource.getMessage("rating.satisfactory", new Object[]{}, getLocale());
         } else if (part > 0.6d && !(part > 0.8d)) {
-            rating = "Good!";
+            rating = messageSource.getMessage("rating.good", new Object[]{}, getLocale());
         } else {
-            rating = "Excellent!!!";
+            rating = messageSource.getMessage("rating.verybad", new Object[]{}, getLocale());
         }
         return rating;
     }

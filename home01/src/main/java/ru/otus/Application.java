@@ -1,27 +1,30 @@
 package ru.otus;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.otus.model.Questions;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import ru.otus.services.TestConsole;
 import ru.otus.util.CsvReader;
 
 import java.io.IOException;
 
+@Configuration
+@ComponentScan
+@PropertySource(value="classpath:application.properties")
 public class Application {
 
     public static void main(String[] args) throws InterruptedException {
-
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("/context.xml");
-        CsvReader csvReader = context.getBean("csvReader", CsvReader.class);
-
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Application.class);
+        CsvReader csvReader = context.getBean(CsvReader.class);
         try {
             csvReader.readCsv();
-            TestConsole testConsole = context.getBean("testConsole", TestConsole.class);
+            TestConsole testConsole = context.getBean(TestConsole.class);
             testConsole.runTest();
         } catch (IOException ioExc) {
             throw new RuntimeException("Error reading file with questions!" + ioExc, ioExc);
         } catch (Exception exc) {
-            throw new RuntimeException("Error during the testing...");
+            throw new RuntimeException("Error during the testing..." + exc, exc);
         } finally {
             stopping();
         }
