@@ -1,10 +1,9 @@
 package ru.otus.util;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
 import ru.otus.model.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-@Service
+@Component
 public class CsvReader {
 
     @Value("${user.language}")
@@ -58,8 +57,7 @@ public class CsvReader {
         this.defineLocale();
     }
 
-    @Bean
-    public void readCsv() throws IOException {
+    public List<IQuestion> readCsv() throws IOException {
         String fileName = getLocale() == Locale.ENGLISH ? fileNameEn : fileNameRu;
         BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
         String line = null;
@@ -95,6 +93,8 @@ public class CsvReader {
         }
         questions.setQuestionList(questionList);
         reader.close();
+
+        return questionList;
     }
 
     private void defineLocale() {

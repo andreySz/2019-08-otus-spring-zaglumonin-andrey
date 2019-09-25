@@ -3,8 +3,9 @@ package ru.otus.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import ru.otus.model.*;
-import org.springframework.stereotype.Service;
 import ru.otus.util.CsvReader;
 
 import java.io.BufferedReader;
@@ -14,10 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-@Service
+@Component
 public class TestConsole {
 
-    @Value("$user.language")
+    @Value("${user.language}")
     private String userLanguage;
 
     @Value("${questions.mintrueanswers}")
@@ -39,11 +40,12 @@ public class TestConsole {
         this.locale = locale;
     }
 
-    public void runTest() throws IOException {
+    @Bean
+    public String runTest() throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         this.printWelcome(input);
 
-        List<IQuestion> questionsList = csvReader.getQuestions().getQuestionList();
+        List<IQuestion> questionsList = csvReader.readCsv();
         int cntQst = questionsList.size();
         System.out.println(messageSource.getMessage("count.questions", new Object[]{cntQst}, getLocale()));
         String command = "start";
@@ -82,6 +84,7 @@ public class TestConsole {
         } catch (NumberFormatException nfExc) {
             throw new RuntimeException("Incorrect input answer variant" + nfExc, nfExc);
         }
+        return "OK";
     }
 
     private void printWelcome(BufferedReader input) throws IOException {
@@ -130,5 +133,7 @@ public class TestConsole {
         }
         return rating;
     }
+
+
 
 }
