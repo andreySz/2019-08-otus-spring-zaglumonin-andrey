@@ -1,19 +1,11 @@
 package ru.otus.model;
 
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 
-@Component
-public class Questions implements IQuestions {
+public interface Questions {
 
-    private List<IQuestion> questionList;
+    List<Question> getQuestionList();
 
-    public List<IQuestion> getQuestionList() {
-        return questionList;
-    }
+    void setQuestionList(List<Question> questionList);
 
-    public void setQuestionList(List<IQuestion> questionList) {
-        this.questionList = questionList;
-    }
 }

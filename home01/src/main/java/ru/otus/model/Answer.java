@@ -1,23 +1,12 @@
 package ru.otus.model;
 
-public class Answer implements IAnswer {
+public interface Answer {
 
-    private String answer;
-    private boolean isCorrect;
+    String getAnswer();
 
-    public String getAnswer() {
-        return answer;
-    }
+    void setAnswer(String answer);
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
+    boolean isCorrect();
 
-    public boolean isCorrect() {
-        return isCorrect;
-    }
-
-    public void setCorrect(boolean correct) {
-        isCorrect = correct;
-    }
+    void setCorrect(boolean correct);
 }

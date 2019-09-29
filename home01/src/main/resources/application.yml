@@ -1,0 +1,9 @@
+questions:
+    file:
+        path:
+            en: /test_en_EN.csv
+            ru: /test_ru_RU.csv
+    mintrueanswers: 4
+
+user:
+    language: ru

@@ -1,10 +1,9 @@
 package ru.otus.util;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
 import ru.otus.model.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-@Service
+@Component
 public class CsvReader {
 
     @Value("${user.language}")
@@ -24,7 +23,7 @@ public class CsvReader {
     @Value("${questions.file.path.en}")
     private String fileNameEn;
 
-    private IQuestions questions;
+    private Questions questions;
 
     private Locale locale;
 
@@ -36,11 +35,11 @@ public class CsvReader {
         this.fileNameEn = fileName;
     }
 
-    public IQuestions getQuestions() {
+    public Questions getQuestions() {
         return questions;
     }
 
-    public void setQuestions(Questions questions) {
+    public void setQuestions(QuestionsImpl questions) {
         this.questions = questions;
     }
 
@@ -53,23 +52,22 @@ public class CsvReader {
     }
 
     public CsvReader() {
-        this.questions = new Questions();
-        this.questions.setQuestionList(new LinkedList<IQuestion>());
+        this.questions = new QuestionsImpl();
+        this.questions.setQuestionList(new LinkedList<Question>());
         this.defineLocale();
     }
 
-    @Bean
-    public void readCsv() throws IOException {
+    public List<Question> readCsv() throws IOException {
         String fileName = getLocale() == Locale.ENGLISH ? fileNameEn : fileNameRu;
         BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
         String line = null;
         int indexInLine = 0;
         int indexQuestion = 1;
-        List<IQuestion> questionList = new LinkedList<IQuestion>();
+        List<Question> questionList = new LinkedList<Question>();
         while ((line = reader.readLine()) != null) {
-            Question question = new Question();
-            Answer answer = new Answer();
-            List<IAnswer> answerList = new LinkedList<IAnswer>();
+            QuestionImpl question = new QuestionImpl();
+            AnswerImpl answer = new AnswerImpl();
+            List<Answer> answerList = new LinkedList<Answer>();
             Scanner scanner = new Scanner(line);
             scanner.useDelimiter(",");
             while (scanner.hasNext()) {
@@ -78,7 +76,7 @@ public class CsvReader {
                     question.setIndex(indexQuestion);
                     question.setQuestion(data);
                 } else if (indexInLine == 1 || indexInLine == 3 || indexInLine == 5 || indexInLine == 7 || indexInLine == 9) {
-                    answer = new Answer();
+                    answer = new AnswerImpl();
                     answer.setAnswer(data);
                 } else if (indexInLine == 2 || indexInLine == 4 || indexInLine == 6 || indexInLine == 8 || indexInLine == 10) {
                     answer.setCorrect("1".equals(data) ? true : false);
@@ -95,6 +93,8 @@ public class CsvReader {
         }
         questions.setQuestionList(questionList);
         reader.close();
+
+        return questionList;
     }
 
     private void defineLocale() {
