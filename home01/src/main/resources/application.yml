@@ -7,3 +7,8 @@ questions:
 
 user:
     language: ru
+
+#spring:
+#    shell:
+#        interactive:
+#            enabled: false

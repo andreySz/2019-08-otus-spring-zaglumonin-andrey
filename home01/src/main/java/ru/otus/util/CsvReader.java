@@ -59,41 +59,43 @@ public class CsvReader {
 
     public List<Question> readCsv() throws IOException {
         String fileName = getLocale() == Locale.ENGLISH ? fileNameEn : fileNameRu;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
-        String line = null;
+        String line;
         int indexInLine = 0;
         int indexQuestion = 1;
-        List<Question> questionList = new LinkedList<Question>();
-        while ((line = reader.readLine()) != null) {
-            QuestionImpl question = new QuestionImpl();
-            AnswerImpl answer = new AnswerImpl();
-            List<Answer> answerList = new LinkedList<Answer>();
-            Scanner scanner = new Scanner(line);
-            scanner.useDelimiter(",");
-            while (scanner.hasNext()) {
-                String data = scanner.next();
-                if (indexInLine == 0) {
-                    question.setIndex(indexQuestion);
-                    question.setQuestion(data);
-                } else if (indexInLine == 1 || indexInLine == 3 || indexInLine == 5 || indexInLine == 7 || indexInLine == 9) {
-                    answer = new AnswerImpl();
-                    answer.setAnswer(data);
-                } else if (indexInLine == 2 || indexInLine == 4 || indexInLine == 6 || indexInLine == 8 || indexInLine == 10) {
-                    answer.setCorrect("1".equals(data) ? true : false);
-                    answerList.add(answer);
-                } else {
-                    System.out.println("Incorrect data:" + data);
+        List<Question> questionList = new LinkedList<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
+        try {
+            while ((line = reader.readLine()) != null) {
+                QuestionImpl question = new QuestionImpl();
+                AnswerImpl answer = new AnswerImpl();
+                List<Answer> answerList = new LinkedList<>();
+                Scanner scanner = new Scanner(line);
+                scanner.useDelimiter(",");
+                while (scanner.hasNext()) {
+                    String data = scanner.next();
+                    if (indexInLine == 0) {
+                        question.setIndex(indexQuestion);
+                        question.setQuestion(data);
+                    } else if (indexInLine == 1 || indexInLine == 3 || indexInLine == 5 || indexInLine == 7 || indexInLine == 9) {
+                        answer = new AnswerImpl();
+                        answer.setAnswer(data);
+                    } else if (indexInLine == 2 || indexInLine == 4 || indexInLine == 6 || indexInLine == 8 || indexInLine == 10) {
+                        answer.setCorrect("1".equals(data) ? true : false);
+                        answerList.add(answer);
+                    } else {
+                        System.out.println("Incorrect data:" + data);
+                    }
+                    indexInLine++;
                 }
-                indexInLine++;
+                indexInLine = 0;
+                indexQuestion++;
+                question.setAnswerList(answerList);
+                questionList.add(question);
             }
-            indexInLine = 0;
-            indexQuestion++;
-            question.setAnswerList(answerList);
-            questionList.add(question);
+            questions.setQuestionList(questionList);
+        } catch (Exception exc) {
+            throw new RuntimeException("Error during reading CSV file" + exc, exc);
         }
-        questions.setQuestionList(questionList);
-        reader.close();
-
         return questionList;
     }
 
@@ -105,6 +107,16 @@ public class CsvReader {
         } else {
             setLocale(new Locale("ru"));
         }
+    }
+
+    public int getQuestionCount() {
+        int cnt = 0;
+        try {
+            cnt = questions.getQuestionList().size();
+        } catch (Exception exc) {
+            throw new RuntimeException("Empty questions list" + exc, exc);
+        }
+        return cnt;
     }
 
 }
