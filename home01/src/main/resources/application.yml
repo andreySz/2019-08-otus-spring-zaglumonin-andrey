@@ -8,7 +8,7 @@ questions:
 user:
     language: ru
 
-#spring:
-#    shell:
-#        interactive:
-#            enabled: false
+spring:
+    shell:
+        interactive:
+            enabled: false
