@@ -6,10 +6,7 @@ import ru.otus.model.*;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 @Component
 public class CsvReader {
@@ -53,22 +50,22 @@ public class CsvReader {
 
     public CsvReader() {
         this.questions = new QuestionsImpl();
-        this.questions.setQuestionList(new LinkedList<Question>());
+        this.questions.setQuestionList(new ArrayList<>());
         this.defineLocale();
     }
 
-    public List<Question> readCsv() throws IOException {
+    public List<Question> readCsv() {
         String fileName = getLocale() == Locale.ENGLISH ? fileNameEn : fileNameRu;
         String line;
         int indexInLine = 0;
         int indexQuestion = 1;
-        List<Question> questionList = new LinkedList<>();
+        List<Question> questionList = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
         try {
             while ((line = reader.readLine()) != null) {
                 QuestionImpl question = new QuestionImpl();
                 AnswerImpl answer = new AnswerImpl();
-                List<Answer> answerList = new LinkedList<>();
+                List<Answer> answerList = new ArrayList<>();
                 Scanner scanner = new Scanner(line);
                 scanner.useDelimiter(",");
                 while (scanner.hasNext()) {
