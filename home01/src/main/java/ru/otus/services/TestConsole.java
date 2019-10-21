@@ -3,7 +3,6 @@ package ru.otus.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import ru.otus.model.*;
 import ru.otus.util.CsvReader;
@@ -32,6 +31,8 @@ public class TestConsole {
     @Autowired
     private CsvReader csvReader;
 
+    private int score;
+
     public Locale getLocale() {
         return locale;
     }
@@ -40,59 +41,60 @@ public class TestConsole {
         this.locale = locale;
     }
 
-    @Bean
-    public String runTest() throws IOException {
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        this.printWelcome(input);
-
+    public int runTest() throws IOException {
         List<Question> questionsList = csvReader.readCsv();
         int cntQst = questionsList.size();
         System.out.println(messageSource.getMessage("count.questions", new Object[]{cntQst}, getLocale()));
         String command = "start";
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         try {
-            while ((!"no".equalsIgnoreCase(command)) && (!"n".equalsIgnoreCase(command))) {
-                int score = 0;
-                Iterator<Question> itQ = questionsList.iterator();
-                while (itQ.hasNext()) {
-                    Question question = itQ.next();
-                    this.printQuestion(question);
-                    Iterator<Answer> itA = question.getAnswerList().iterator();
-                    int indexAnswer = 1;
-                    int indexCorrectAnswer = 0;
-                    while (itA.hasNext()){
-                        Answer answer = itA.next();
-                        this.printAnswer(answer, indexAnswer);
-                        indexCorrectAnswer = answer.isCorrect() ? indexAnswer : indexCorrectAnswer;
-                        indexAnswer++;
-                    }
-                    System.out.print(messageSource.getMessage("your.answer", new Object[]{}, getLocale()));
-                    int respondedAnswer;
-                    try {
-                        respondedAnswer = Integer.valueOf(input.readLine());
-                    } catch (NumberFormatException nfExc) {
-                        respondedAnswer = 0;
-                    }
-                    score = checkAnswer(indexCorrectAnswer, respondedAnswer) ? ++score : score;
+            score = 0;
+            Iterator<Question> itQ = questionsList.iterator();
+            while (itQ.hasNext()) {
+                Question question = itQ.next();
+                this.printQuestion(question);
+                Iterator<Answer> itA = question.getAnswerList().iterator();
+                int indexAnswer = 1;
+                int indexCorrectAnswer = 0;
+                while (itA.hasNext()){
+                    Answer answer = itA.next();
+                    this.printAnswer(answer, indexAnswer);
+                    indexCorrectAnswer = answer.isCorrect() ? indexAnswer : indexCorrectAnswer;
+                    indexAnswer++;
                 }
-
-                this.printResults(score, cntQst);
-                System.out.println(messageSource.getMessage("one.more.time", new Object[]{}, getLocale()));
-                command = input.readLine();
+                System.out.print(messageSource.getMessage("your.answer", new Object[]{}, getLocale()));
+                int respondedAnswer;
+                try {
+                    respondedAnswer = Integer.parseInt(input.readLine());
+                } catch (NumberFormatException nfExc) {
+                    respondedAnswer = 0;
+                }
+                score = checkAnswer(indexCorrectAnswer, respondedAnswer) ? ++score : score;
             }
         } catch (IOException ioExc) {
-            throw new RuntimeException("Input error value" + ioExc, ioExc);
+            throw new RuntimeException("Input error value " + ioExc, ioExc);
         } catch (NumberFormatException nfExc) {
-            throw new RuntimeException("Incorrect input answer variant" + nfExc, nfExc);
+            throw new RuntimeException("Incorrect input answer variant " + nfExc, nfExc);
+        }
+        return score;
+    }
+
+    public String login() {
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        try  {
+            System.out.print(messageSource.getMessage("enter.first.name", new Object[]{}, getLocale()));
+            String studentFirstName = input.readLine();
+            System.out.print(messageSource.getMessage("enter.last.name", new Object[]{}, getLocale()));
+            String studentLastName = input.readLine();
+            this.printWelcome(studentFirstName, studentLastName);
+        } catch (Exception exc) {
+            throw new RuntimeException("Error during login" + exc, exc);
         }
         return "OK";
     }
 
-    private void printWelcome(BufferedReader input) throws IOException {
+    public void printWelcome(String studentFirstName, String studentLastName) throws IOException {
         System.out.println(" ********************************** TESTING ********************************* ");
-        System.out.print(messageSource.getMessage("enter.first.name", new Object[]{}, getLocale()));
-        String studentFirstName = input.readLine();
-        System.out.print(messageSource.getMessage("enter.last.name", new Object[]{}, getLocale()));
-        String studentLastName = input.readLine();
         System.out.println(messageSource.getMessage("hi.firstname.lastname", new Object[]{studentFirstName, studentLastName}, getLocale()));
         System.out.println(messageSource.getMessage("lets.start", new Object[]{}, getLocale()));
     }
@@ -106,18 +108,19 @@ public class TestConsole {
         System.out.print(indexAnswer + ") " + answer.getAnswer() + "; ");
     }
 
-    private void printResults(int score, int countQuestions) {
+    public String printResults() {
         System.out.println("\n-----------------------------------------------------------------------------");
-        System.out.print(messageSource.getMessage("print.results", new Object[]{score, this.calcUserRating(score, countQuestions)}, getLocale()));
+        System.out.print(messageSource.getMessage("print.results", new Object[]{score, this.calcUserRating(csvReader.getQuestionCount())}, getLocale()));
         System.out.print("\n-----------------------------------------------------------------------------");
         System.out.println("\n-----------------------------------------------------------------------------");
+        return "OK";
     }
 
     private boolean checkAnswer(int correctInd, int answeredInd) {
         return correctInd == answeredInd;
     }
 
-    private String calcUserRating(int score, int countQuestions) {
+    private String calcUserRating(int countQuestions) {
         String rating;
         double part = (double) score/countQuestions;
         if (!(part > 0.2d)) {
@@ -133,7 +136,5 @@ public class TestConsole {
         }
         return rating;
     }
-
-
 
 }
