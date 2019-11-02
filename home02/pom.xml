@@ -9,7 +9,7 @@
     <version>5.0.0</version>
     <packaging>jar</packaging>
 
-    <name>home02projects</name>
+    <name>home02</name>
 
     <properties>
         <java.version>1.8</java.version>
