@@ -10,6 +10,7 @@ import ru.otus.domain.Genre;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,11 +29,23 @@ public class BookDaoImpl implements BookDao {
             "INNER JOIN authors " +
                     "ON books.author_id = authors.id " +
             "WHERE authors.id = :authorId";
+    private final String INSERT_QUERY_BOOK =
+            "INSERT INTO books (title, author_id, genre_id) VALUES (:title, :authorId, :genreId)";
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
     public BookDaoImpl(NamedParameterJdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
+    }
+
+    @Override
+    public void insertBook(Book book) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("title", book.getTitle());
+        params.put("authorId", book.getAuthor().getId());
+        params.put("genreId", book.getGenre().getId());
+        int inserted = jdbcOperations.update(INSERT_QUERY_BOOK, params);
+        System.out.println("inserted = " + inserted);
     }
 
     @Override
@@ -53,15 +66,24 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public List<Book> getBooksByGenre(Genre genre) {
-        final Map<String, Object> params = Collections.singletonMap("genreId", genre.getId());
+    public List<Book> getBooksByGenre(Long id) {
+        final Map<String, Object> params = Collections.singletonMap("genreId", id);
         return jdbcOperations.query(SELECT_QUERY_FOR_GET_BY_GENRE, params, new BookMapper());
     }
 
     @Override
-    public List<Book> getBooksByAuthor(Author author) {
-        final Map<String, Object> params = Collections.singletonMap("authorId", author.getId());
+    public List<Book> getBooksByAuthor(Long id) {
+        final Map<String, Object> params = Collections.singletonMap("authorId", id);
         return jdbcOperations.query(SELECT_QUERY_FOR_GET_BY_AUTHOR, params, new BookMapper());
+    }
+
+    @Override
+    public void updateBookTitleById(Long id, String newTitle) {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("title", newTitle);
+        int updated = jdbcOperations.update("UPDATE books SET title = :title WHERE id = :id", params);
+        System.out.println("updated = " + updated);
     }
 
     private static class BookMapper implements RowMapper<Book> {

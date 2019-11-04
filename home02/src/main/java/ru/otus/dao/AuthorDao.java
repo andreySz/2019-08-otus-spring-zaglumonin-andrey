@@ -8,6 +8,6 @@ import java.util.List;
 public interface AuthorDao {
 
     List<Author> getAll();
-
     Author getById(long id) throws SQLException;
+
 }

@@ -14,6 +14,18 @@ public class Book {
         this.genre = genre;
     }
 
+    public Book(String ttile, String author, String genre) {
+        this.title = ttile;
+        this.author = new Author(author);
+        this.genre = new Genre(genre);
+    }
+
+    public Book(String title, Author author, Genre genre) {
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+    }
+
     public Book(Long id, String title) {
         this.id = id;
         this.title = title;

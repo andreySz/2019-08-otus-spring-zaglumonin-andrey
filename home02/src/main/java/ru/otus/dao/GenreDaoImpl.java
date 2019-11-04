@@ -31,10 +31,8 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public Genre getById(long id) throws SQLException {
-
         final Map<String, Object> params = Collections.singletonMap("genreId", id);
         List<Genre> genresList = jdbcOperations.query(SELECT_QUERY_FOR_GET_BY_ID, params, new GenreMapper());
-
         if (genresList.isEmpty()) {
             throw new SQLException("Could not find genre with id " + id);
         } else if (genresList.size() > 1) {
